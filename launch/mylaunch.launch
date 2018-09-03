@@ -1,0 +1,21 @@
+<launch>
+    <param name ="/use_sim_time" value="true"/>
+   <node name="stage_node" pkg="stage_ros" type="stageros"  args="$(find my_stage)/worlds/my.world" output="screen">
+    <remap from="base_scan" to="scan"/>
+   </node>
+   <node name="map_server" pkg="map_server" type="map_server" args="$(find guide_navigation)/map/myfile.yaml" output="screen"/>
+
+  <!--- Run AMCL -->
+  <include file="$(find guide_navigation)/launch/amcl.launch" />
+  <!--- Run move_base with parameters -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find guide_navigation)/config/peoplebot/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find guide_navigation)/config/peoplebot/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find guide_navigation)/config/peoplebot/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find guide_navigation)/config/peoplebot/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find guide_navigation)/config/peoplebot/dwa_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find guide_navigation)/config/peoplebot/navfn_global_planner_params.yaml" command="load" />
+    <rosparam file="$(find guide_navigation)/config/peoplebot/move_base_params.yaml" command="load" />
+  </node>
+
+</launch>
